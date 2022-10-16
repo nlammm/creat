@@ -4,7 +4,7 @@ from fastapi import FastAPI
 app = FastAPI()
 @app.post("/apishare")
 async def modeshare(cookie:str, idpost:str, message):
-    headers = {
+    hd = {
         'authority': 'mbasic.facebook.com',
         'scheme': 'https',
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -20,15 +20,15 @@ async def modeshare(cookie:str, idpost:str, message):
         'upgrade-insecure-requests': '1',
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36',
     }
-    url = requests.get(f'https://mbasic.facebook.com/{idpost}').url
-    share = requests.get(url,headers=headers).text
+    url = requests.get(f'https://mbasic.facebook.com/{idpost}',headers=hd).url
+    share = requests.get(url,headers=hd).text
     _find = re.findall('composer/mbasic/.*?"',share)
     if _find == []:
         data = {'status':'fail','message':'Post Die Hoặc Không Có Nút Share'}
         return data
     else:
         data = str(_find[0]).replace('amp;','').replace('"','')
-        done1 = requests.get(f'https://mbasic.facebook.com/{data}',headers=headers).text
+        done1 = requests.get(f'https://mbasic.facebook.com/{data}',headers=hd).text
         fb_dtsg = done1.split('name="fb_dtsg" value="')[1].split('"')[0]
         jazoest = done1.split('name="jazoest" value="')[1].split('"')[0]
         target = done1.split('name="target" value="')[1].split('"')[0]
@@ -59,7 +59,7 @@ async def modeshare(cookie:str, idpost:str, message):
         }
         share2 = done1.split('action="/composer/mbasic/?csid=')[1].split('"')[0]
         share3 = share2.replace('amp;','')
-        _share = requests.post(f'https://mbasic.facebook.com/composer/mbasic/?csid={share3}',headers=headers,data=data).text
+        _share = requests.post(f'https://mbasic.facebook.com/composer/mbasic/?csid={share3}',headers=hd,data=data).text
         if "Cảnh báo" in _share or "Giờ bạn chưa dùng được tính năng này" in _share:
             data = {'status':'fail','message':'Account Bị Block Tính Năng'}
             return data
