@@ -2,7 +2,7 @@ import requests,os,platform,re
 from fastapi import FastAPI
 
 app = FastAPI()
-@app.post("/apishare")
+@app.post("/")
 async def modeshare(cookie:str, idpost:str, message):
     hd = {
         'authority': 'mbasic.facebook.com',
